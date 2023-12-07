@@ -1,7 +1,12 @@
 import customtkinter
-
-class Calculator_Screen(customtkinter.CTkFrame):
-    pass
+import tkinter as tk
+class Calculator_Screen(tk.Frame):
+    def __init__(self, master):
+        super().__init__(master)
+    
+        self.configure(bg='#333333')
+        label = tk.Label(self, text="test")
+        label.pack()
 
 class Calculator_Buttons(customtkinter.CTkFrame):
     def __init__(self, master):
@@ -17,6 +22,10 @@ class App(customtkinter.CTk):
         brand_font = customtkinter.CTkFont(family='Eurostile', size=27)
         calculator_Brand = customtkinter.CTkLabel(self, text="B4S1C C4LC", font=brand_font)
         calculator_Brand.grid(row=0, column=0, sticky="ew", padx=5, pady=20)
+
+        screen = Calculator_Screen(self)
+
+        buttons = Calculator_Buttons(self)
 
 if __name__ == "__main__":
     app = App()
