@@ -1,31 +1,44 @@
-import customtkinter
 import tkinter as tk
+from tkinter import ttk
+from tkinter import font
+
+foreground = "#b6e853"
+background = "#1a1a1a"
+
 class Calculator_Screen(tk.Frame):
-    def __init__(self, master):
+    def __init__(self, master=None):
         super().__init__(master)
-    
+
+        global foreground
+
+        screen_bg = "#333333" 
+
         self.configure(bg='#333333')
-        label = tk.Label(self, text="test")
-        label.pack()
+        upperDigits = tk.Label(self, text="NumberScreen", font=("CASIO-Calculator-Font", 9), bg=screen_bg, fg='black')
+        upperDigits.pack(side=tk.LEFT, padx=5, pady=10)
 
-class Calculator_Buttons(customtkinter.CTkFrame):
+        inputDigits = tk.Entry(self, bg=screen_bg, border=None)
+        inputDigits.pack(side=tk.LEFT, padx=5, pady=10)
+
+class Calculator_Buttons(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
 
 
-class App(customtkinter.CTk):
+class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Disk Scheduling Algorithm")
         self.geometry("450x700")
-        self.columnconfigure((0, 1), weight=1)
-        brand_font = customtkinter.CTkFont(family='Eurostile', size=27)
-        calculator_Brand = customtkinter.CTkLabel(self, text="B4S1C C4LC", font=brand_font)
-        calculator_Brand.grid(row=0, column=0, sticky="ew", padx=5, pady=20)
+        self.configure(bg="#1a1a1a") 
+
+        global foreground, background
+
+        calculator_Brand = tk.Label(self, text="B4S1C C4LC", font=("CASIO-Calculator-Font", 15), bg=background, fg=foreground)
+        calculator_Brand.pack(pady=20) 
 
         screen = Calculator_Screen(self)
-
-        buttons = Calculator_Buttons(self)
+        screen.pack(fill=tk.X)
 
 if __name__ == "__main__":
     app = App()
