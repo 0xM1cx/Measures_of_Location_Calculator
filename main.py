@@ -28,13 +28,13 @@ class Calculator_Buttons(tk.Frame):
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Disk Scheduling Algorithm")
+        self.title("Measures of Location Calculator")
         self.geometry("450x700")
         self.configure(bg="#1a1a1a") 
 
         global foreground, background
 
-        calculator_Brand = tk.Label(self, text="B4S1C C4LC", font=("CASIO-Calculator-Font", 15), bg=background, fg=foreground)
+        calculator_Brand = tk.Label(self, text="Measures Of Location Calculator", font=("CASIO-Calculator-Font", 8), bg=background, fg=foreground)
         calculator_Brand.pack(pady=20) 
 
         screen = Calculator_Screen(self)
