@@ -66,7 +66,7 @@ class OUTPUT(customtkinter.CTkScrollableFrame):
 
     def displayOutput(self, locToFind, n):
         # display unsorted data in a 10 column format
-
+        font = customtkinter.CTkFont(family="Monaco, 'Bitstream Vera Sans Mono', 'Lucida Console', Terminal, monospace", size=15)
         self.clear_frame()
 
         data_str = ""
@@ -84,7 +84,7 @@ class OUTPUT(customtkinter.CTkScrollableFrame):
             data = [str(x) for x in data]
             data_str = " ".join(data)
 
-        display_data = customtkinter.CTkLabel(self, text=f"UNSORTED DATA:\n{data_str}", text_color=textColor) 
+        display_data = customtkinter.CTkLabel(self, font=font, text=f"UNSORTED DATA:\n{data_str}", text_color=textColor) 
         display_data.pack(padx=10, pady=10)
 
         # Display sorted Data
@@ -103,7 +103,7 @@ class OUTPUT(customtkinter.CTkScrollableFrame):
             _data_ = [str(x) for x in sorted_data]
             sorted_data_str = " ".join(_data_)
 
-        display_sorted_data = customtkinter.CTkLabel(self, text=f"SORTED DATA:\n{sorted_data_str}", text_color=textColor)
+        display_sorted_data = customtkinter.CTkLabel(self, font=font, text=f"SORTED DATA:\n{sorted_data_str}", text_color=textColor)
         display_sorted_data.pack(padx=10, pady=10) 
 
 
@@ -138,13 +138,13 @@ class OUTPUT(customtkinter.CTkScrollableFrame):
         # display_result.pack(padx = 20, pady=20)
 
         if locToFind == "Quartiles":
-            display_computation_result = customtkinter.CTkLabel(self, text=f"The result of the computation was: {results[locToFind][int(n)-1][1]}", text_color=textColor)
+            display_computation_result = customtkinter.CTkLabel(self, font=font, text=f"The result of the computation was: \n{results[locToFind][int(n)-1][1]}", text_color=textColor)
             display_computation_result.pack(padx=20, pady=20)
         elif locToFind == "Deciles":
-            display_computation_result = customtkinter.CTkLabel(self, text=f"The result of the computation was: {results[locToFind][0]}", text_color=textColor)
+            display_computation_result = customtkinter.CTkLabel(self, font=font, text=f"The result of the computation was: \n{results[locToFind][0]}", text_color=textColor)
             display_computation_result.pack(padx=20, pady=20)
         elif locToFind == "Percentiles":
-            display_computation_result = customtkinter.CTkLabel(self, text=f"The result of the computation was: {results[locToFind][0]}", text_color=textColor)
+            display_computation_result = customtkinter.CTkLabel(self, font=font, text=f"The result of the computation was: \n{results[locToFind][0]}", text_color=textColor)
             display_computation_result.pack(padx=20, pady=20)
 
 #### The widgets in the frames must be in a grid
