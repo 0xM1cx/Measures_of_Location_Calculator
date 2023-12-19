@@ -109,11 +109,11 @@ class OUTPUT(customtkinter.CTkScrollableFrame):
 
 
         #display Result
-        if "2" in n:
+        if "2" in n[-1]:
             n_word = f"{n}nd"
-        elif "1" in n:
+        elif "1" in n[-1]:
             n_word = f"{n}st"
-        elif "3" in n:
+        elif "3" in n[-1]:
             n_word = f"{n}rd"
         else:
             n_word = f"{n}th"
