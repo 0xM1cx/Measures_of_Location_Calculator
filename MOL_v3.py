@@ -1,35 +1,28 @@
 import customtkinter
-import tkinter as tk
-from tkinter import ttk
-from time import sleep
 import numpy as np
 
-## Plotting Stuff
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
 
 entries = []
-watToFind = []
 ## Color palet ta
 textColor = "#00C4F7"
 results = {
     "Quartiles": [],
     "Percentiles": [],
-    "Decile": []
+    "Deciles": []
 }
 data = []
 
-
-class ComputeMeasuresOfLocation():
-    pass
-
+'''
+# TODO
+1. Add pointing down arrows at the results lable
+2. Fix the computation
+'''
 
 class InputWindow(customtkinter.CTkToplevel):
     def __init__(self, locToFind):
         super().__init__()
         self.geometry("400x300")
+        self.title("What To Find?")
         font = customtkinter.CTkFont(family="Monaco, 'Bitstream Vera Sans Mono', 'Lucida Console', Terminal, monospace", size=30)
         self.label = customtkinter.CTkLabel(self, text=f"Give the nth {locToFind}", font=font)
         self.label.pack(padx=20, pady=20)
@@ -50,55 +43,86 @@ class InputWindow(customtkinter.CTkToplevel):
         # self.input = customtkinter.CTkEntry(self, placeholder_text=f"Supply Some Input({locToFind})", text_color=textColor)
         # self.input.pack(side="top", expand=True, fill="x", padx=20, pady=20)
         
-        self.sumbit = customtkinter.CTkButton(self, font=font, text="Sumbit", text_color=textColor, command=self.processInput)
+        self.sumbit = customtkinter.CTkButton(self, text="Sumbit", text_color=textColor, command=self.processInput, fg_color='black')
+        self.sumbit.pack(side="top", padx=10, pady=10)
+
         self.locToFind = locToFind
+
+
     def processInput(self):
         global watToFind
         watToFind = self.input.get().split(" ") 
 
         output = self.master.output
-        output.display_data(self, self.locToFind, self.input.get())
-
-
-class ErrorMessage(customtkinter.CTkToplevel):
-    def __init__(self, *args):
-        super().__init__(*args)
-        self.geometry("500x500")
-        font = customtkinter.CTkFont(family="Monaco, 'Bitstream Vera Sans Mono', 'Lucida Console', Terminal, monospace", size=20)
-        self.label = customtkinter.CTkLabel(self, font=font, width = 100, height=100, text_color="#b5e853", text="The Requests must be within the outermost and innermost disk range")
+        output.displayOutput(self.locToFind, self.input.get())
 
 class OUTPUT(customtkinter.CTkScrollableFrame):
     def __init__(self, master):
         super().__init__(master)
-        
+
+    def clear_frame(self):
+        # Destroy all child widgets in the frame
+        for widget in self.winfo_children():
+            widget.destroy()
 
     def displayOutput(self, locToFind, n):
-        # display data in a 10 column format
+        # display unsorted data in a 10 column format
+
+        self.clear_frame()
+
         data_str = ""
         counter = 0
-        global data 
-        for num in data:
-            if counter % 10 == 0:
-                data_str += " " + str(num) + "\n" 
-            else:
-                data_str += " " + num
-            counter += 1
+        global data
+        global results
+        print(f"GLOBAL DATA: {data}")
+        if len(data) > 10: 
+            for num in data:
+                if counter % 10 == 0 and counter != 1:
+                    data_str += " " + str(num) + "\n" 
+                else:
+                    data_str += " " + str(num)
+                counter += 1
+        else:
+            data = [str(x) for x in data]
+            data_str = " ".join(data)
 
-        display_data = customtkinter.CTkLabel(self, text=f"DATA: {data_str}", text_color=textColor) 
+        display_data = customtkinter.CTkLabel(self, text=f"UNSORTED DATA:\n{data_str}", text_color=textColor) 
         display_data.pack(padx=10, pady=10)
 
-        #display Result
-        global results
-        if "2" in n:
-            n = f"{n}nd"
-        elif "1" in n:
-            n = f"{n}st"
-        elif "3" in n:
-            n = f"{n}rd"
+        # Display sorted Data
+        sorted_data_str = ""
+        _counter = 0
+        converted_data = [int(i) for i in data]
+        sorted_data = sorted(converted_data)
+        if len(sorted_data) > 10:
+            for _num in sorted_data:
+                if _counter % 10 == 0 and _counter != 1:
+                    sorted_data_str += " " + str(_num) + "\n"
+                else:
+                    sorted_data_str += " " + str(_num)
+                _counter += 1
         else:
-            n = f"{n}nd"
+            _data_ = [str(x) for x in sorted_data]
+            sorted_data_str = " ".join(_data_)
 
-        display_result = customtkinter.CTkLabel(self, text=f"The {n} {locToFind} => {results[locToFind][int(n)]}")
+        display_sorted_data = customtkinter.CTkLabel(self, text=f"SORTED DATA:\n{sorted_data_str}", text_color=textColor)
+        display_sorted_data.pack(padx=10, pady=10) 
+
+
+
+        #display Result
+        if "2" in n:
+            n_word = f"{n}nd"
+        elif "1" in n:
+            n_word = f"{n}st"
+        elif "3" in n:
+            n_word = f"{n}rd"
+        else:
+            n_word = f"{n}th"
+        
+        print(len(results[locToFind]))
+        display_result = customtkinter.CTkLabel(self, text=f"The {n_word} {locToFind} => {results[locToFind][int(n)]}", text_color=textColor)
+        display_result.pack(padx = 20, pady=20)
 
 #### The widgets in the frames must be in a grid
 class DataTable(customtkinter.CTkScrollableFrame):
@@ -169,8 +193,8 @@ class OptionMenu(customtkinter.CTkFrame):
 
     def calculateQuartile(self):
         global entries, results
-        array_data = self.data
-        sorted_data = np.sort(array_data)
+        array_data =  [int(x) for x in data] 
+        sorted_data = sorted(array_data)
         
         Q1 = np.percentile(sorted_data, 25)
         Q2 = np.percentile(sorted_data, 50)
@@ -188,8 +212,8 @@ class OptionMenu(customtkinter.CTkFrame):
 
     def calculatePercentile(self):
         global entries, results
-        array_data = self.data
-        sorted_data = np.sort(array_data)
+        array_data =  [int(x) for x in data] 
+        sorted_data = sorted(array_data)
         percentiles = [np.percentile(sorted_data, i) for i in range(1, 101)]
         results["Percentiles"] = percentiles
 
@@ -201,10 +225,10 @@ class OptionMenu(customtkinter.CTkFrame):
 
     def calculateDecile(self):
         global entries, results
-        array_data = self.data
-        sorted_data = np.sort(array_data)
+        array_data =  [int(x) for x in data] 
+        sorted_data = sorted(array_data)
         deciles = [np.percentile(sorted_data, i) for i in range(10, 100, 10)]
-        results["Decile"] = deciles
+        results["Deciles"] = deciles
 
 
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
@@ -223,7 +247,7 @@ class OptionMenu(customtkinter.CTkFrame):
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
-        self.title("Disk Scheduling Algorithm")
+        self.title("Measures of Location Calculator")
         self.geometry("900x600")
         self.columnconfigure((0, 1), weight=1)
         self.rowconfigure(0, weight=1)
