@@ -134,7 +134,6 @@ class OUTPUT(customtkinter.CTkScrollableFrame):
                 results["Percentiles"].append((res, res))
             else:
                 results["Percentiles"].append((round(res), res))
-        print(results[locToFind])
         # display_result = customtkinter.CTkLabel(self, text=f"The {n_word} {locToFind} => {results[locToFind][int(n)-1][0]}", text_color=textColor)
         # display_result.pack(padx = 20, pady=20)
 
@@ -144,6 +143,10 @@ class OUTPUT(customtkinter.CTkScrollableFrame):
         elif locToFind == "Deciles":
             display_computation_result = customtkinter.CTkLabel(self, text=f"The result of the computation was: {results[locToFind][0]}", text_color=textColor)
             display_computation_result.pack(padx=20, pady=20)
+        elif locToFind == "Percentiles":
+            display_computation_result = customtkinter.CTkLabel(self, text=f"The result of the computation was: {results[locToFind][0]}", text_color=textColor)
+            display_computation_result.pack(padx=20, pady=20)
+
 #### The widgets in the frames must be in a grid
 class DataTable(customtkinter.CTkScrollableFrame):
     rowCounter = 0
