@@ -1,7 +1,6 @@
 import customtkinter
 import numpy as np
-
-
+from MOL_CALCULATOR import ComputeDecile, ComputePercentile, ComputeQuartile
 entries = []
 ## Color palet ta
 textColor = "#00C4F7"
@@ -74,7 +73,6 @@ class OUTPUT(customtkinter.CTkScrollableFrame):
         counter = 0
         global data
         global results
-        print(f"GLOBAL DATA: {data}")
         if len(data) > 10: 
             for num in data:
                 if counter % 10 == 0 and counter != 1:
@@ -119,11 +117,33 @@ class OUTPUT(customtkinter.CTkScrollableFrame):
             n_word = f"{n}rd"
         else:
             n_word = f"{n}th"
-        
-        print(len(results[locToFind]))
-        display_result = customtkinter.CTkLabel(self, text=f"The {n_word} {locToFind} => {results[locToFind][int(n)]}", text_color=textColor)
-        display_result.pack(padx = 20, pady=20)
 
+
+
+        if locToFind == "Deciles":
+            results['Deciles'].clear()
+            res, flag = ComputeDecile(sorted_data, int(n))
+            if flag == True:
+                results["Deciles"].append((res, res))
+            else:
+                results["Deciles"].append((round(res), res))
+        elif locToFind == "Percentiles":
+            results["Percentiles"].clear()
+            res, flag = ComputePercentile(sorted_data, int(n))
+            if flag == True:
+                results["Percentiles"].append((res, res))
+            else:
+                results["Percentiles"].append((round(res), res))
+        print(results[locToFind])
+        # display_result = customtkinter.CTkLabel(self, text=f"The {n_word} {locToFind} => {results[locToFind][int(n)-1][0]}", text_color=textColor)
+        # display_result.pack(padx = 20, pady=20)
+
+        if locToFind == "Quartiles":
+            display_computation_result = customtkinter.CTkLabel(self, text=f"The result of the computation was: {results[locToFind][int(n)-1][1]}", text_color=textColor)
+            display_computation_result.pack(padx=20, pady=20)
+        elif locToFind == "Deciles":
+            display_computation_result = customtkinter.CTkLabel(self, text=f"The result of the computation was: {results[locToFind][0]}", text_color=textColor)
+            display_computation_result.pack(padx=20, pady=20)
 #### The widgets in the frames must be in a grid
 class DataTable(customtkinter.CTkScrollableFrame):
     rowCounter = 0
@@ -193,16 +213,28 @@ class OptionMenu(customtkinter.CTkFrame):
 
     def calculateQuartile(self):
         global entries, results
-        array_data =  [int(x) for x in data] 
+        
+        array_data =  [float(x) for x in data] 
         sorted_data = sorted(array_data)
         
-        Q1 = np.percentile(sorted_data, 25)
-        Q2 = np.percentile(sorted_data, 50)
-        Q3 = np.percentile(sorted_data, 75)
-        results["Quartiles"] = []
-        results["Quartiles"].append(Q1)
-        results["Quartiles"].append(Q2)
-        results["Quartiles"].append(Q3)
+        Q1, flag1 = ComputeQuartile(data=sorted_data, k="1") 
+        Q2, flag2 = ComputeQuartile(data=sorted_data, k="2")
+        Q3, flag3 = ComputeQuartile(data=sorted_data, k="3")
+
+        results["Quartiles"].clear()
+        if flag1 == True:
+            results["Quartiles"].append((Q1, Q1))
+        else: 
+            results["Quartiles"].append((round(Q1), Q1))
+        if flag2 == True:
+            results["Quartiles"].append((Q2, Q2))
+        else:
+            results["Quartiles"].append((round(Q2), Q2))
+        if flag3 == True:
+            results["Quartiles"].append((Q3, Q3))
+        else:
+            results["Quartiles"].append((round(Q3), Q3))
+        
 
 
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
@@ -212,10 +244,9 @@ class OptionMenu(customtkinter.CTkFrame):
 
     def calculatePercentile(self):
         global entries, results
-        array_data =  [int(x) for x in data] 
+        array_data =  [float(x) for x in data] 
         sorted_data = sorted(array_data)
-        percentiles = [np.percentile(sorted_data, i) for i in range(1, 101)]
-        results["Percentiles"] = percentiles
+        
 
 
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
@@ -225,10 +256,8 @@ class OptionMenu(customtkinter.CTkFrame):
 
     def calculateDecile(self):
         global entries, results
-        array_data =  [int(x) for x in data] 
+        array_data =  [float(x) for x in data] 
         sorted_data = sorted(array_data)
-        deciles = [np.percentile(sorted_data, i) for i in range(10, 100, 10)]
-        results["Deciles"] = deciles
 
 
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
